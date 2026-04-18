@@ -315,7 +315,7 @@ npx vercel --prod
 
 ---
 
-## 🔧 Configuration Reference
+## Configuration Reference
 
 All key configuration lives inside the n8n workflow JSON. Below is a summary:
 
