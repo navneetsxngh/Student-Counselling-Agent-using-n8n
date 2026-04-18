@@ -58,7 +58,7 @@ The system routes students to one of two specialist AI agents:
 The frontend is a single-file `index.html` — open it in any browser or serve it statically. The chat widget connects to an n8n webhook in real time.
 
 ```
-Webhook URL: https://devendradebu.app.n8n.cloud/webhook/<your-id>/chat
+Webhook URL: "N8N-WEBHOOK-URL"
 ```
 
 > Replace the webhook URL in `index.html` with your own n8n production webhook before deploying.
@@ -290,7 +290,7 @@ Open `index.html` and replace the webhook URL on **line ~1100**:
 
 ```javascript
 // BEFORE
-const N8N_WEBHOOK_URL = 'https://devendradebu.app.n8n.cloud/webhook/a90adbf0-facb-4ca0-87ff-2ac832fc78c7/chat';
+const N8N_WEBHOOK_URL = 'YOUR-WEBHOOK-URL';
 
 // AFTER — paste your own webhook URL
 const N8N_WEBHOOK_URL = 'https://YOUR-N8N-INSTANCE/webhook/YOUR-WEBHOOK-ID/chat';
@@ -351,7 +351,7 @@ All key configuration lives inside the n8n workflow JSON. Below is a summary:
 
 ---
 
-## 📚 RAG Knowledge Base
+## RAG Knowledge Base
 
 The `RAG Documents/` folder contains the source documents used to populate the Supabase vector store. These are chunked, embedded (using OpenAI `text-embedding-ada-002`), and stored in Supabase via the n8n **Supabase Vector Store** node.
 
