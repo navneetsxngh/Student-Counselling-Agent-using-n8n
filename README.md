@@ -1,4 +1,4 @@
-# 🎓 CareerPath AI — Student Counselling Agent
+# CareerPath AI — Student Counselling Agent
 
 > **An AI-powered career counselling system built with n8n, GPT-4o Mini, Supabase RAG, and Google Sheets — delivering personalised 12-month career roadmaps to tech and non-tech students in under 15 minutes.**
 
@@ -10,7 +10,7 @@
 
 ---
 
-## 📌 Table of Contents
+## Table of Contents
 
 - [Overview](#-overview)
 - [Live Demo](#-live-demo)
@@ -30,7 +30,7 @@
 
 ---
 
-## 🧠 Overview
+## Overview
 
 **CareerPath AI** is a fully automated, multi-agent career counselling system built by [Regex Software Services](https://github.com/navneetsxngh). A student opens a chat widget on the website, shares their name, email, and educational background — and within minutes receives a structured, phase-by-phase, 12-month career roadmap powered by a verified Supabase vector knowledge base.
 
@@ -38,8 +38,8 @@ The system routes students to one of two specialist AI agents:
 
 | Track | For | Counsellor Agent |
 |-------|-----|-----------------|
-| 🖥️ Tech | CSE, ECE, Mechanical, Civil, IT, Electrical | **Tech Counsellor** (Supabase `tech` table) |
-| 🎓 Non-Tech | Commerce, Arts, Law, Psychology, MBA, Mass Comm | **Non-Tech Counsellor** (Supabase `nontech` table) |
+| Tech | CSE, ECE, Mechanical, Civil, IT, Electrical | **Tech Counsellor** (Supabase `tech` table) |
+| Non-Tech | Commerce, Arts, Law, Psychology, MBA, Mass Comm | **Non-Tech Counsellor** (Supabase `nontech` table) |
 
 **Key stats from production:**
 ```json
@@ -53,7 +53,7 @@ The system routes students to one of two specialist AI agents:
 
 ---
 
-## 🌐 Live Demo
+## Live Demo
 
 The frontend is a single-file `index.html` — open it in any browser or serve it statically. The chat widget connects to an n8n webhook in real time.
 
@@ -61,11 +61,11 @@ The frontend is a single-file `index.html` — open it in any browser or serve i
 Webhook URL: https://devendradebu.app.n8n.cloud/webhook/<your-id>/chat
 ```
 
-> ⚠️ Replace the webhook URL in `index.html` with your own n8n production webhook before deploying.
+> Replace the webhook URL in `index.html` with your own n8n production webhook before deploying.
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -75,7 +75,7 @@ Webhook URL: https://devendradebu.app.n8n.cloud/webhook/<your-id>/chat
                            │  HTTP POST (sessionId + message)
                            ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                    n8n Cloud Workflow                         │
+│                    n8n Cloud Workflow                       │
 │                                                             │
 │  ┌──────────────┐    ┌────────────────────┐                 │
 │  │ Chat Trigger │───▶│ Basic Info Agent   │                 │
@@ -90,10 +90,10 @@ Webhook URL: https://devendradebu.app.n8n.cloud/webhook/<your-id>/chat
 │                      └────────┬───────────┘                 │
 │                               │                             │
 │                    ┌──────────▼──────────┐                  │
-│                    │   IF: Tech or        │                  │
-│                    │   Non-Tech?          │                  │
+│                    │   IF: Tech or        │                 │
+│                    │   Non-Tech?          │                 │
 │                    └──────┬──────┬───────┘                  │
-│                           │      │                           │
+│                           │      │                          │
 │              ┌────────────▼┐    ┌▼──────────────┐           │
 │              │ Tech Agent  │    │ Non-Tech Agent │           │
 │              │ GPT-4o Mini │    │ GPT-4o Mini    │           │
@@ -102,7 +102,7 @@ Webhook URL: https://devendradebu.app.n8n.cloud/webhook/<your-id>/chat
 │              └────────────┬┘    └┬──────────────┘           │
 │                           │      │                           │
 │                    ┌──────▼──────▼───────┐                  │
-│                    │  12-Month Roadmap    │                  │
+│                    │  12-Month Roadmap    │                 │
 │                    │  Delivered to User  │                  │
 │                    └─────────────────────┘                  │
 └─────────────────────────────────────────────────────────────┘
@@ -110,7 +110,7 @@ Webhook URL: https://devendradebu.app.n8n.cloud/webhook/<your-id>/chat
 
 ---
 
-## 🔄 Workflow Breakdown
+## Workflow Breakdown
 
 The n8n workflow consists of **5 core nodes**:
 
@@ -186,7 +186,7 @@ Both agents query their respective Supabase vector tables using the student's st
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer | Technology | Purpose |
 |-------|------------|---------|
@@ -200,7 +200,7 @@ Both agents query their respective Supabase vector tables using the student's st
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 Student-Counselling-Agent-using-n8n/
@@ -222,7 +222,7 @@ Student-Counselling-Agent-using-n8n/
 
 ---
 
-## ⚙️ Setup & Installation
+## Setup & Installation
 
 ### Prerequisites
 
@@ -369,7 +369,7 @@ The `RAG Documents/` folder contains the source documents used to populate the S
 
 ---
 
-## 🤖 Agent Behaviour
+## Agent Behaviour
 
 ### Intake Agent Prompt Logic
 ```
@@ -402,7 +402,7 @@ First 30-day Action Plan:  [Concrete steps this week]
 
 ---
 
-## 📊 Google Sheets CRM
+## Google Sheets CRM
 
 Every completed intake session is automatically appended to a Google Sheet with the following columns:
 
@@ -419,7 +419,7 @@ This gives you a live CRM of every student who has engaged with the system, usab
 
 ---
 
-## 🖥️ Frontend (index.html)
+## Frontend (index.html)
 
 The landing page is a single self-contained HTML file (~50KB) with no build step or dependencies required.
 
@@ -446,7 +446,7 @@ The landing page is a single self-contained HTML file (~50KB) with no build step
 
 ---
 
-## 📸 Screenshots
+## Screenshots
 
 > Screenshots are available in the [`Screenshots/`](./Screenshots/) folder of the repository.
 
@@ -459,7 +459,7 @@ The landing page is a single self-contained HTML file (~50KB) with no build step
 
 ---
 
-## ❓ FAQ
+## FAQ
 
 **Q: Can I self-host n8n instead of using n8n Cloud?**  
 Yes. Install n8n via Docker or npm, import the workflow JSON, and update the webhook URL in `index.html`. All functionality is identical.
@@ -478,7 +478,7 @@ Yes — duplicate either counsellor agent node, create a new Supabase table for 
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the **MIT License** — see [`LICENSE`](./LICENSE) for details.
 
@@ -490,7 +490,7 @@ Copyright (c) 2026 Navneet Singh
 
 <div align="center">
 
-Built with ❤️ by **Navneet Singh** · [Regex Software Services](https://github.com/navneetsxngh)
+Built with by **Navneet Singh** · [Regex Software Services](https://github.com/navneetsxngh)
 
 **Stack:** n8n · GPT-4o Mini · Supabase · Google Sheets · Vanilla HTML
 
