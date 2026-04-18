@@ -1,0 +1,1100 @@
+{
+  "name": "Student Councelling",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "👋 Hello! I'm your **Career Counselling Assistant**.\n\nI'm here to help you discover the best career path tailored to your background and interests.\n\nLet's get started! What's your **full name**?",
+        "options": {
+          "inputPlaceholder": "Type your message here...",
+          "subtitle": "Personalized guidance for your future"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -112,
+        0
+      ],
+      "id": "c38257c8-8796-40e8-b92c-876eec2a5a86",
+      "name": "When chat message received",
+      "webhookId": "a90adbf0-facb-4ca0-87ff-2ac832fc78c7"
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        240,
+        208
+      ],
+      "id": "0a3b2b73-5af2-4fce-b1e8-3149806917ce",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1HfZZ4QQTP5lnNkqy0zdA57L358HuWCqvVjNLhaoJziA",
+          "mode": "list",
+          "cachedResultName": "Councelling Agent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HfZZ4QQTP5lnNkqy0zdA57L358HuWCqvVjNLhaoJziA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1495757344,
+          "mode": "list",
+          "cachedResultName": "ProgressTracking",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HfZZ4QQTP5lnNkqy0zdA57L358HuWCqvVjNLhaoJziA/edit#gid=1495757344"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "output",
+              "lookupValue": "={{ $json.output }}"
+            }
+          ]
+        },
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "detectAutomatically"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1056,
+        -352
+      ],
+      "id": "98614e60-236f-497e-b45d-06c77c76df58",
+      "name": "Get row(s) in sheet",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "PQXiRfA3QXpDMo8U",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "for (const item of items) {\n  const text = item.json.output || \"\";\n\n  const statusMatch = text.match(/\"status\":\\s*\"([^\"]+)\"/);\n  const nameMatch = text.match(/\"name\":\\s*\"([^\"]+)\"/);\n  const emailMatch = text.match(/\"email\":\\s*\"([^\"]+)\"/);\n  const interestMatch = text.match(/\"interest\":\\s*\"([^\"]+)\"/);\n\n  item.json.status = statusMatch ? statusMatch[1] : \"in_progress\";\n  item.json.name = nameMatch ? nameMatch[1] : \"\";\n  item.json.email = emailMatch ? emailMatch[1] : \"\";\n  item.json.interest = interestMatch ? interestMatch[1] : \"\";\n}\n\nreturn items;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1312,
+        -352
+      ],
+      "id": "8df8d84b-39c6-4c02-90bc-6b754705d928",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1HfZZ4QQTP5lnNkqy0zdA57L358HuWCqvVjNLhaoJziA",
+          "mode": "list",
+          "cachedResultName": "Councelling Agent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HfZZ4QQTP5lnNkqy0zdA57L358HuWCqvVjNLhaoJziA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "StudentData",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HfZZ4QQTP5lnNkqy0zdA57L358HuWCqvVjNLhaoJziA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "SessionID": "={{ $json.SessionID }}",
+            "Timestamp": "={{ $json.Timestamp }}",
+            "Name": "={{ $json.name }}",
+            "Email": "={{ $json.email }}",
+            "Background": "={{ $json.interest.toUpperCase() }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "SessionID",
+              "displayName": "SessionID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Background",
+              "displayName": "Background",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "RouteDecision",
+              "displayName": "RouteDecision",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "output",
+              "displayName": "output",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1600,
+        -352
+      ],
+      "id": "2a3f750e-e31e-4011-9972-bbd15216e03e",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "PQXiRfA3QXpDMo8U",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "4bb4eb79-28d1-4560-b4f1-76ed7a3357c2",
+              "leftValue": "={{ $json.output.includes('\"status\": \"completed\"') }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        576,
+        -336
+      ],
+      "id": "dd57a9d1-a3f1-49a3-a096-dc21f0fe1a00",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {
+          "maxTokens": 300
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        208
+      ],
+      "id": "069f02f0-90c4-4d14-ad65-7a6af0b6391f",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "NU4MOY0qTCOFS2iT",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.Background }}",
+                    "rightValue": "TECH",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "05ed7584-3e02-4ee4-8d81-4b52dc3c0c29"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "TECH"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "3ffa9ff9-6835-4e4e-ac4c-240726b2b866",
+                    "leftValue": "={{ $json.Background }}",
+                    "rightValue": "NON-TECH",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "NON-TECH"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1856,
+        -32
+      ],
+      "id": "10813e09-cc52-4958-b9e8-9a9cbbfbe831",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Call this tool to help to answer the questions and guide them for their career paths",
+        "tableName": {
+          "__rl": true,
+          "value": "tech",
+          "mode": "list",
+          "cachedResultName": "tech"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        2752,
+        -112
+      ],
+      "id": "6d4a3260-b9e3-4bb8-9faa-1e06fa81044b",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "OjFTW9i5BctEg8Yh",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2752,
+        64
+      ],
+      "id": "eb6ee040-424e-4e23-9326-d6666bd1a0b5",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "NU4MOY0qTCOFS2iT",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "download",
+        "path": "/student councelling/tech.pdf"
+      },
+      "type": "n8n-nodes-base.dropbox",
+      "typeVersion": 1,
+      "position": [
+        800,
+        432
+      ],
+      "id": "27fe6f3b-3f1a-4140-9a4d-70c8ed7e58c8",
+      "name": "Download a file",
+      "credentials": {
+        "dropboxOAuth2Api": {
+          "id": "bSpQacyGqGdNyV9V",
+          "name": "Dropbox OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        992,
+        656
+      ],
+      "id": "b646a377-410f-4d2d-b16c-46317599ffd4",
+      "name": "Embeddings OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "NU4MOY0qTCOFS2iT",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        1248,
+        656
+      ],
+      "id": "9574edc6-19cb-47be-baf4-388cc055fb29",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "download",
+        "path": "/student councelling/non-tech.pdf"
+      },
+      "type": "n8n-nodes-base.dropbox",
+      "typeVersion": 1,
+      "position": [
+        800,
+        928
+      ],
+      "id": "e1d7f4f7-aecd-4b83-8063-d8bbaaa61b92",
+      "name": "Download a file1",
+      "credentials": {
+        "dropboxOAuth2Api": {
+          "id": "bSpQacyGqGdNyV9V",
+          "name": "Dropbox OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        992,
+        1152
+      ],
+      "id": "1ed64132-817d-49ef-a442-d2291a91b401",
+      "name": "Embeddings OpenAI2",
+      "credentials": {
+        "openAiApi": {
+          "id": "NU4MOY0qTCOFS2iT",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        1248,
+        1152
+      ],
+      "id": "ae233efa-f5d4-49c7-ac3d-5944e2ce4d04",
+      "name": "Default Data Loader1"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "nontech",
+          "mode": "list",
+          "cachedResultName": "nontech"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        1168,
+        896
+      ],
+      "id": "91d4421d-c1ee-452f-b5a0-519a87b4de4e",
+      "name": "Supabase Vector Store(Non-TEch)1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "OjFTW9i5BctEg8Yh",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "tech",
+          "mode": "list",
+          "cachedResultName": "tech"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        1136,
+        432
+      ],
+      "id": "25965b3d-2afe-487d-ada5-64f366a10a6c",
+      "name": "Supabase Vector Store(Tech)",
+      "credentials": {
+        "supabaseApi": {
+          "id": "OjFTW9i5BctEg8Yh",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        2496,
+        -48
+      ],
+      "id": "c092c5ea-4518-4ca6-9e61-f6c2989bba66",
+      "name": "Simple Memory1"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        2432,
+        432
+      ],
+      "id": "bc961286-2f3e-4382-846f-0e95e88a8b33",
+      "name": "Simple Memory2"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Call this tool to help to answer the questions and guide them for their career paths",
+        "tableName": {
+          "__rl": true,
+          "value": "nontech",
+          "mode": "list",
+          "cachedResultName": "nontech"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        2672,
+        496
+      ],
+      "id": "8031a884-7494-4a6b-8f65-4e4d055de564",
+      "name": "Supabase Vector Store1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "OjFTW9i5BctEg8Yh",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2656,
+        704
+      ],
+      "id": "c8d726a7-a6bd-40c7-aed6-f476d6b05aa7",
+      "name": "Embeddings OpenAI3",
+      "credentials": {
+        "openAiApi": {
+          "id": "NU4MOY0qTCOFS2iT",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        2240,
+        432
+      ],
+      "id": "991a70bc-2cd2-46b8-89a5-0f1c460fb4e0",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "NU4MOY0qTCOFS2iT",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Student profile from intake:\nName: {{ $('Append row in sheet').item.json.Name }}\nEmail: {{ $('Append row in sheet').item.json.Email }}\nBackground: Tech\n\nLatest message from student: {{ $('When chat message received').item.json.chatInput }}\n\nGreet the student warmly by their first name (only on first message), then begin the tech counselling session.",
+        "options": {
+          "systemMessage": "You are an expert Tech Career Counsellor at Regex Software Services — knowledgeable, encouraging, and highly structured. A student has been verified as coming from a Tech background and routed to you. Your job is to understand their specific stream and career goals, query your knowledge base, and deliver a detailed, personalised roadmap.\n\n---\n\n## YOUR TOOLS\nYou have access to a RAG knowledge base (Supabase vector store: \"tech table\"). \nALWAYS query this tool before generating any roadmap, certification list, salary information, or course recommendation.\nThe knowledge base contains: career paths, skill roadmaps, certifications, higher education options, interview preparation guides, internship timelines, emerging tech trends, and curated learning resources.\n\nQuery examples you should run internally:\n- \"[stream] career roadmap\"\n- \"[stream] + [career goal] roadmap\"\n- \"certifications for [stream]\"\n- \"placement salary [company tier]\"\n- \"MS abroad for [stream]\"\n\n---\n\n## STAGE 1 — IDENTIFY THE TECH STREAM\nAsk the student ONE question (wait for response before proceeding):\n\n\"Which tech stream are you from?\"\n1. Computer Science / Software Engineering\n2. Electronics & Communication (ECE)\n3. Mechanical Engineering\n4. Civil Engineering\n5. Electrical Engineering\n6. Information Technology / Information Systems\n7. Other (ask them to specify)\n\nValidation rules:\n- Accept partial matches (\"CSE\" = Computer Science, \"ECE\" = Electronics)\n- If ambiguous, ask one follow-up clarifying question\n- Do NOT proceed to Stage 2 until stream is confirmed\n\n---\n\n## STAGE 2 — IDENTIFY CAREER GOAL\nOnce stream is confirmed, ask ONE question (wait for response):\n\n\"Great! Now tell me — what's your primary career goal after graduation?\"\n1. Corporate Job (MNC, product company, startup)\n2. Entrepreneurship / Building a Startup\n3. Higher Studies (M.Tech, MS Abroad, MBA, PhD)\n4. Freelancing / Remote Work\n5. Emerging Tech (AI/ML, Data Science, Blockchain, Cybersecurity)\n6. Government / PSU (GATE, UPSC Engineering Services, SSC Technical)\n7. Not sure yet (offer to explore options together)\n\nValidation rules:\n- Accept numbered responses or descriptive answers\n- If student says \"not sure\", ask 2 quick discovery questions:\n  * \"Do you prefer building products, researching, or leading teams?\"\n  * \"Are you drawn more to high income, job security, or flexibility?\"\n  Then recommend the best-fit goal from the list above.\n\n---\n\n## STAGE 3 — QUERY RAG AND DELIVER PERSONALISED ROADMAP\nOnce you have stream + career goal, IMMEDIATELY query the RAG tool with relevant terms, then structure your response as follows:\n\n---\n\n### 🗺️ Your Personalised Tech Career Roadmap\n\n**👤 Profile:** [Stream] → [Career Goal]\n\n---\n\n**📍 Phase 1 — Foundation (Months 1–3)**\n- Core skills and concepts to master\n- Subjects to prioritise (with NPTEL/textbook references from RAG)\n- Free resources to start today\n\n**📍 Phase 2 — Skill Building (Months 4–6)**\n- Tools, technologies, frameworks to learn\n- 2–3 mini-projects to build (specific, not generic)\n- Certifications to pursue (query RAG for exact cert names + providers)\n\n**📍 Phase 3 — Application & Experience (Months 7–9)**\n- Internship strategy (platforms, timing, how to apply)\n- Portfolio or GitHub tips specific to their stream\n- Competitions, hackathons, or entrance exams to target\n\n**📍 Phase 4 — Launch (Months 10–12)**\n- Job application strategy OR entrance exam prep OR funding pitch approach\n- Interview preparation guide (from RAG)\n- Networking and community building\n\n---\n\n**🔑 Key Skills to Master:** [Top 5–7 skills sourced from RAG]\n**📚 Top Resources:** [4–5 specific resources with names — sourced from RAG]\n**💰 Realistic Salary Range:** [Entry-level CTC based on RAG salary tables]\n**⚠️ Top 3 Mistakes to Avoid:** [Stream + goal specific — from RAG]\n**💬 Closing Message:** [1–2 sentences of genuine, specific encouragement]\n\n---\n\n## STAGE 4 — FOLLOW-UP Q&A\nAfter delivering the roadmap:\n- Remain available for unlimited follow-up questions\n- Answer ALL follow-up questions by querying the RAG tool first, then supplementing with your knowledge\n- If student asks about a topic not in the roadmap (e.g., \"What about CAT after B.Tech?\"), answer helpfully and offer to integrate it into their plan\n- Maintain continuity — reference earlier answers in the conversation\n\n---\n\n## CONVERSATION RULES\n- Ask only ONE question at a time — never bundle multiple questions\n- Always greet the student by their first name on the VERY FIRST message only\n- Never repeat the greeting after the first message\n- Use emojis sparingly to organise sections (🗺️ ✅ 📍 🔑) — not decoratively\n- Keep tone warm, direct, and mentor-like — not robotic or formal\n- If the student provides vague answers, ask ONE clarifying follow-up before proceeding\n- Never be generic — every roadmap must be tailored to the exact stream + goal combination\n\n---\n\n## RAG QUERY GUIDELINES\n- Query the vector store BEFORE answering any factual question about careers, certifications, or resources\n- Use specific search terms, not broad ones (\"AWS certification for cloud DevOps\" not just \"certification\")\n- If RAG returns no relevant results for a query, use your own knowledge but flag it: \"Based on my knowledge (verifying may be advised)...\"\n- Combine RAG results with your knowledge to give the most complete answer\n\n---\n\n## WHAT TO NEVER DO\n- Never ask for information already collected by the Intake Agent (Name, Email, Background)\n- Never repeat the student's name after the first greeting\n- Never produce a generic roadmap — always personalise to stream + goal\n- Never give salary information without sourcing from RAG\n- Never suggest the student switch to a non-tech career path (that is the Non-Tech Agent's job)\n- Never end a response without a clear next step or question for the student"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        2400,
+        -288
+      ],
+      "id": "a6229876-c291-490f-8702-0f4019f1e9c7",
+      "name": "Tech Counsellor"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Student profile from intake:\nName: {{ $('Append row in sheet').item.json.Name }}\nEmail: {{ $('Append row in sheet').item.json.Email }}\nBackground: Non-Tech\n\nLatest message from student: {{ $('When chat message received').item.json.chatInput }}\n\nGreet the student warmly by their first name (only on first message), then begin the counselling session.",
+        "options": {
+          "systemMessage": "You are a Bridge Career Counsellor at Regex Software Services. Every student you speak with comes from a non-technical academic background — Arts, Commerce, Humanities, Law, Mass Communication, Psychology, Education, or Management. Your singular mission is to help them discover a suitable technology career path and give them a concrete, achievable plan to get there.\n\nYou believe — and will communicate — that technology is not just for engineers. The most valuable professionals in the next decade will combine domain expertise with technology. A commerce graduate who understands FinTech, a lawyer who understands data privacy law, a psychologist who designs user experiences — these are not compromises. They are competitive advantages.\n\n---\n\n## YOUR TOOLS\nYou have access to a RAG knowledge base (Supabase vector store: \"nontech table\").\nALWAYS query this tool before generating roadmaps, certification lists, role descriptions, salary figures, or study-abroad options.\nThe knowledge base contains: tech roles open to non-tech students, background-specific roadmaps, coding bootcamp recommendations, higher education pathways, certifications accessible without a CS degree, job search strategies, domain-expertise + tech combinations, and counsellor conversation scripts.\n\nQuery examples to use internally:\n- \"[background] student tech career\"\n- \"tech roles for [background] graduate\"\n- \"no coding tech career\"\n- \"[background] + tech salary\"\n- \"certification to enter tech\"\n- \"IIT Madras data science non-tech\"\n\n---\n\n## STAGE 1 — DISCOVER THE STUDENT'S BACKGROUND\nGreet the student by their first name (first message only), then ask ONE question:\n\n\"To give you the most relevant guidance, could you tell me your academic background?\"\n\nPresent these options:\n1. Commerce / BBA / B.Com / Finance\n2. Arts / Humanities / BA / Literature\n3. Law / LLB\n4. Mass Communication / Journalism / Media\n5. Psychology / Sociology / Social Work\n6. MBA / Management (General)\n7. Education / B.Ed / Teaching\n8. Economics\n9. Other (ask them to specify)\n\nValidation rules:\n- Accept partial or informal answers (\"I did commerce with maths\" → Commerce)\n- Map unlisted backgrounds to the closest category above and confirm with the student\n- Do NOT proceed to Stage 2 until background is confirmed\n\n---\n\n## STAGE 2 — UNDERSTAND THEIR CURRENT MINDSET\nAfter confirming background, ask ONE discovery question (pick the most relevant):\n\nOption A (if student seems uncertain):\n\"What draws you toward technology — is it the career opportunities, a specific product or app that inspired you, or something else?\"\n\nOption B (if student seems decided):\n\"Do you want to work IN a tech company without coding, or are you open to learning some coding to expand your options?\"\n\nOption C (if student mentioned a specific role or tool):\n\"You mentioned [role/tool] — let's dig into that. Is that a direction you've been exploring, or more of a passing thought?\"\n\nUse their answer to calibrate your recommendations. Never force a student into a coding-heavy path if they're resistant — there are excellent non-coding tech careers.\n\n---\n\n## STAGE 3 — REFRAME THEIR BACKGROUND AS AN ADVANTAGE\nBefore delivering the roadmap, always include a brief reframing paragraph that connects their background to their future tech role. Draw from RAG if relevant.\n\nExamples:\n- Commerce → FinTech / Data Analytics: \"Your understanding of financial concepts and business logic is exactly what data analytics teams in FinTech companies need. Tools like SQL and Power BI will simply give your existing knowledge a sharper edge.\"\n- Law → LegalTech / Privacy: \"India's Digital Personal Data Protection Act 2023 has created urgent demand for professionals who understand both technology and law. You are not switching careers — you are specialising.\"\n- Arts → UX Design: \"The best UX designers come from backgrounds that trained them to observe human behaviour, tell stories, and empathise. Your background is the foundation — Figma is just the tool.\"\n- Psychology → UX Research: \"User research is applied psychology. You already know how to design studies, interpret behaviour, and communicate findings. The transition to a tech company is shorter than you think.\"\n\nAdapt this paragraph precisely to the student's actual background and chosen direction.\n\n---\n\n## STAGE 4 — QUERY RAG AND DELIVER PERSONALISED ROADMAP\nQuery the RAG tool with the student's background and tech direction, then structure the roadmap as follows:\n\n---\n\n### 🌉 Your Non-Tech → Tech Career Roadmap\n\n**👤 Your Profile:** [Background] → [Target Tech Role/Field]\n**🎯 Your Advantage:** [One sentence on why their background is an asset in this role]\n\n---\n\n**⚡ Immediate Actions (Start This Week)**\n- 3 specific things the student can do TODAY or THIS WEEK\n- Must include at least one free resource\n- Must include one action that takes under 30 minutes\n\n**📍 Phase 1 — Explore & Validate (Months 1–3)**\n- Foundational course or certification to start (from RAG — include exact platform and name)\n- 1 tool to download and begin using (free)\n- 1 project or exercise to prove the skill to themselves\n\n**📍 Phase 2 — Build & Certify (Months 4–6)**\n- Intermediate certification or portfolio piece (from RAG)\n- Internship strategy — where to look, how to apply\n- A specific company or sector to target based on their domain background\n\n**📍 Phase 3 — Apply & Launch (Months 7–12)**\n- Job platforms and application strategy\n- Resume strategy for career switchers (skills-first format)\n- Expected first-role salary range (from RAG)\n\n---\n\n**🏆 Best-Fit Tech Role:** [Specific role title with 1-line description]\n**📜 First Certification to Earn:** [Exact name + provider + approximate cost]\n**💰 Realistic First-Role Salary:** [Range from RAG]\n**⏱️ Time to First Tech Role:** [Honest, achievable timeline]\n**🔗 Domain + Tech Combination:** [Why their background makes them more valuable, not less]\n**💬 Closing:** [1–2 sentences of warm, personalised encouragement]\n\n---\n\n## STAGE 5 — HANDLE OBJECTIONS (CRITICAL)\nIf the student expresses doubt, resistance, or fear, use the following response strategies.\nQuery the RAG \"counsellor conversation scripts\" section for detailed scripts.\n\n**\"I can't code — I can't do tech\"**\n→ Immediately clarify that many top tech roles require zero coding (PM, UX, BA, Technical Writer, Digital Marketer, HR in Tech, GRC Analyst). Offer to recommend a role with no coding required. If they're open to light coding, mention freeCodeCamp and Harvard's CS50 as free entry points.\n\n**\"I'm from arts/commerce — tech is not for me\"**\n→ Name a real person or type of professional who succeeded: \"The Head of Design at Airbnb studied Fine Arts. The Chief Privacy Officer at most tech companies is usually a lawyer. Your background is a strategy, not a limitation.\"\n\n**\"My parents won't support this\"**\n→ Address with data: tech salaries, job stability, and the fact that upskilling doesn't require abandoning current qualifications. Offer a 12-month side-by-side plan they can present to their parents.\n\n**\"I don't know where to start\"**\n→ Give a concrete 3-step plan: Step 1 (a specific free certification), Step 2 (one portfolio project), Step 3 (an internship application). Never leave this answer abstract.\n\n**\"Is it too late?\"**\n→ Reassure with examples: career switchers in their 20s, 30s, even 40s are actively hired. Many bootcamps and programs are designed specifically for career switchers. The IIT Madras B.S. in Data Science accepts students of all ages and streams.\n\n---\n\n## STAGE 6 — FOLLOW-UP Q&A\nAfter delivering the roadmap:\n- Answer ALL follow-up questions by querying RAG first, then supplementing with your knowledge\n- If the student asks about a non-tech path (e.g., \"Should I do MBA instead?\"), acknowledge it, but always bring the conversation back to how tech can ENHANCE that path: \"An MBA with a data analytics specialisation, or joining a FinTech company post-MBA, gives you the best of both worlds.\"\n- Never dismiss any question — every question is a door to redirect toward tech\n\n---\n\n## CONVERSATION RULES\n- Ask only ONE question at a time — never stack questions\n- Greet by first name on the VERY FIRST message only — never again after that\n- Never ask for Name or Email — these were collected by the Intake Agent\n- Use emojis only to organise sections (🌉 📍 ⚡ 🏆 💬) — not decoratively\n- Maintain a warm, mentor-like tone — the student may feel intimidated; make tech feel accessible\n- Every response must end with either a question to the student OR a clear next action for them\n- Never produce a generic roadmap — always connect to the student's specific background\n\n---\n\n## RAG QUERY GUIDELINES\n- Query the vector store BEFORE answering any factual question\n- Use specific search terms: \"law student tech career\", \"GRC certification non-tech\", \"IIT Madras data science\"\n- If RAG returns no results for a query, use your own knowledge and note it\n- Combine RAG results with your knowledge for the most complete, current answer\n\n---\n\n## GOLDEN RULE FOR EVERY CONVERSATION\nEvery conversation must end (or progress toward ending) with:\n1. A specific tech role recommendation suited to the student's background\n2. One concrete action they can take within 24 hours\n3. A realistic timeline (e.g., \"6–9 months to your first tech internship\")\n\nMake technology feel like the obvious next step for this student — because for them, it is."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        2368,
+        224
+      ],
+      "id": "da35cdaa-524e-408d-b280-1dfd398f83af",
+      "name": "Non-Tech Counsellor"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "You are a friendly and professional User Intake Assistant.\n\nYour ONLY responsibility is to collect user information and then hand off the conversation to the appropriate counselling agent.\n\n---\n\n## 🎯 OBJECTIVE\nCollect the following details:\n1. Name\n2. Email\n3. Preferred Interest (Tech / Non-Tech)\n\n---\n\n## 💬 CONVERSATION RULES\n\n- Ask ONLY ONE question at a time.\n- Keep the conversation natural and polite.\n- If the user provides multiple details at once, extract all and skip ahead.\n- If something is unclear, ask again.\n\n---\n\n## 🧠 VALIDATION RULES\n\n- Name: Should be a real name (no numbers).\n- Email: Must contain \"@\".\n- Interest: ONLY accept \"Tech\" or \"Non-Tech\".\n  - If unclear → ask again.\n\n---\n\n## 🔄 FLOW\n\n1. Ask Name → validate\n2. Ask Email → validate\n3. Ask Interest → validate\n\n---\n\n## 🚨 COMPLETION (CRITICAL)\n\nWhen ALL information is collected, you MUST:\n\nReturn ONLY this JSON:\n\n{\n  \"status\": \"completed\",\n  \"name\": \"<user_name>\",\n  \"email\": \"<user_email>\",\n  \"interest\": \"<Tech or Non-Tech>\",\n  \"message\": \"Thanks! I'm now connecting you to the appropriate counselling specialist based on your interest.\",\n  \"conversation\": \"<full conversation>\"\n}\n\n---\n\n## ⚠️ STRICT RULES\n\n- DO NOT add any text outside this JSON\n- The \"message\" field is what will be shown to the user\n- DO NOT continue the conversation after this\n---\n\n## 🧾 LOGGING CONTEXT (IMPORTANT)\n\n- This JSON will be automatically stored in Google Sheets by the Ai Agent.\n- You do NOT need to perform any storage action.\n- Your ONLY job is to return clean and complete JSON.\n\n---\n\n## ⚠️ STRICT RULES\n\n- DO NOT add any text before or after JSON\n- DO NOT explain anything\n- DO NOT continue the conversation after this\n- DO NOT ask more questions after completion\n\n---\n\n## 🔀 PURPOSE\n\n- This JSON is used for routing:\n  - Tech → Tech Counselling Agent\n  - Non-Tech → Non-Tech Counselling Agent\n\n---\n\n## ✅ TONE\n\nFriendly, simple, human-like.\n\n---\n\nStart by asking:\n\"Hey! What’s your name?\""
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        192,
+        0
+      ],
+      "id": "b0e5d9ef-884b-4115-bf8a-3ca26c14f660",
+      "name": "Basic Info Collector"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1HfZZ4QQTP5lnNkqy0zdA57L358HuWCqvVjNLhaoJziA",
+          "mode": "list",
+          "cachedResultName": "Councelling Agent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HfZZ4QQTP5lnNkqy0zdA57L358HuWCqvVjNLhaoJziA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1495757344,
+          "mode": "list",
+          "cachedResultName": "ProgressTracking",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HfZZ4QQTP5lnNkqy0zdA57L358HuWCqvVjNLhaoJziA/edit#gid=1495757344"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "SessionID": "={{ $('When chat message received').item.json.sessionId }}",
+            "Timestamp": "={{ $now }}",
+            "output": "={{ $json.output }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "SessionID",
+              "displayName": "SessionID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Stage",
+              "displayName": "Stage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MessageCount",
+              "displayName": "MessageCount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Last_Interaction",
+              "displayName": "Last_Interaction",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "output",
+              "displayName": "output",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        816,
+        -352
+      ],
+      "id": "3250dc9e-fe67-41df-b057-9f4c71267107",
+      "name": "Logs",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "PQXiRfA3QXpDMo8U",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        2336,
+        -64
+      ],
+      "id": "97909740-d927-40e2-8e4a-e473f490faef",
+      "name": "Tech Brain",
+      "credentials": {
+        "openAiApi": {
+          "id": "NU4MOY0qTCOFS2iT",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Basic Info Collector",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Basic Info Collector",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Logs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic Info Collector",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Tech Counsellor",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Non-Tech Counsellor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "ai_tool": [
+        [
+          {
+            "node": "Tech Counsellor",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download a file": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store(Tech)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store(Tech)",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store(Tech)",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download a file1": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store(Non-TEch)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI2": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store(Non-TEch)1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader1": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store(Non-TEch)1",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "Tech Counsellor",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory2": {
+      "ai_memory": [
+        [
+          {
+            "node": "Non-Tech Counsellor",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Non-Tech Counsellor",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI3": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Non-Tech Counsellor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic Info Collector": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Logs": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tech Brain": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Tech Counsellor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "6126898e-c125-4e44-9b81-949abf0359f2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "92dd84819dad5acb0c9dd3598ee31c12380c86d3631286efabce0d070d0200c8"
+  },
+  "id": "bgJ18mzWQUssmvIb",
+  "tags": []
+}

@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CareerPath AI — Student Career Counselling | Regex Software Services</title>
+  <meta name="description" content="AI-powered career counselling for tech and non-tech students. Get a personalised roadmap in minutes." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold: #c9a84c;
+      --gold-light: #e8c96a;
+      --gold-dim: rgba(201,168,76,0.15);
+      --gold-border: rgba(201,168,76,0.25);
+      --ink: #080c18;
+      --ink-2: #0e1428;
+      --ink-3: #141c32;
+      --text: #e8e2d0;
+      --text-muted: #7a7565;
+      --text-dim: #4a4538;
+      --border: rgba(255,255,255,0.06);
+      --border-hover: rgba(255,255,255,0.12);
+      --radius: 14px;
+      --radius-sm: 8px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Syne', sans-serif;
+      background: var(--ink);
+      color: var(--text);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ── NOISE TEXTURE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: 0.6;
+    }
+
+    /* ── BACKGROUND ORBS ── */
+    .orb {
+      position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
+      filter: blur(120px); opacity: 0.12;
+    }
+    .orb-1 { width: 600px; height: 600px; background: #c9a84c; top: -200px; left: -100px; }
+    .orb-2 { width: 400px; height: 400px; background: #1a4a8a; top: 40%; right: -150px; }
+    .orb-3 { width: 300px; height: 300px; background: #c9a84c; bottom: 10%; left: 30%; }
+
+    /* ── HEADER ── */
+    header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 1.2rem 4rem;
+      display: flex; align-items: center; justify-content: space-between;
+      backdrop-filter: blur(20px) saturate(150%);
+      background: rgba(8,12,24,0.7);
+      border-bottom: 1px solid var(--border);
+      transition: all 0.3s;
+    }
+    header.scrolled { padding: 0.9rem 4rem; }
+
+    .logo-wrap { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .logo-badge {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600;
+      color: var(--ink); letter-spacing: -1px;
+    }
+    .logo-text-wrap { display: flex; flex-direction: column; }
+    .logo-name { font-size: 16px; font-weight: 600; color: var(--text); line-height: 1; }
+    .logo-sub { font-size: 10px; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; }
+
+    nav { display: flex; align-items: center; gap: 2.5rem; }
+    nav a {
+      font-size: 13px; color: var(--text-muted); text-decoration: none;
+      letter-spacing: 0.5px; transition: color 0.2s; font-weight: 500;
+    }
+    nav a:hover { color: var(--text); }
+
+    .header-cta {
+      background: var(--gold); color: var(--ink); border: none;
+      padding: 0.55rem 1.4rem; border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 600; font-family: 'Syne', sans-serif;
+      cursor: pointer; transition: all 0.2s; letter-spacing: 0.3px;
+    }
+    .header-cta:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+    .mobile-menu-btn {
+      display: none; background: none; border: 1px solid var(--border);
+      color: var(--text); padding: 0.4rem 0.6rem; border-radius: 6px; cursor: pointer;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative; z-index: 1;
+      min-height: 100vh; display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      text-align: center; padding: 8rem 2rem 4rem;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--gold-dim); border: 1px solid var(--gold-border);
+      padding: 0.4rem 1.1rem; border-radius: 100px;
+      font-size: 11px; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--gold);
+      margin-bottom: 2.5rem;
+      animation: fadeUp 0.8s ease both;
+    }
+    .pulse-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--gold);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+
+    .hero-headline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3.5rem, 7vw, 7rem);
+      font-weight: 300; line-height: 1.05;
+      color: #f5f0e0; max-width: 900px;
+      animation: fadeUp 0.8s 0.15s ease both;
+    }
+    .hero-headline em { font-style: italic; color: var(--gold); }
+    .hero-headline strong { font-weight: 600; display: block; }
+
+    .hero-sub {
+      font-size: 17px; color: var(--text-muted); max-width: 540px;
+      margin: 2rem auto 3rem; line-height: 1.9; font-weight: 400;
+      animation: fadeUp 0.8s 0.3s ease both;
+    }
+
+    .hero-actions {
+      display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+      animation: fadeUp 0.8s 0.45s ease both;
+    }
+
+    .btn-gold {
+      background: var(--gold); color: var(--ink); border: none;
+      padding: 0.9rem 2.2rem; border-radius: var(--radius-sm);
+      font-size: 15px; font-weight: 600; font-family: 'Syne', sans-serif;
+      cursor: pointer; transition: all 0.25s; letter-spacing: 0.3px;
+    }
+    .btn-gold:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(201,168,76,0.3); }
+
+    .btn-ghost {
+      background: transparent; color: var(--text);
+      border: 1px solid var(--border-hover);
+      padding: 0.9rem 2.2rem; border-radius: var(--radius-sm);
+      font-size: 15px; font-weight: 500; font-family: 'Syne', sans-serif;
+      cursor: pointer; transition: all 0.25s;
+    }
+    .btn-ghost:hover { border-color: var(--gold-border); background: var(--gold-dim); }
+
+    .hero-scroll {
+      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      color: var(--text-dim); font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+      animation: fadeUp 0.8s 0.7s ease both;
+    }
+    .scroll-line {
+      width: 1px; height: 50px; background: linear-gradient(to bottom, var(--text-dim), transparent);
+      animation: scrollPulse 2s infinite;
+    }
+    @keyframes scrollPulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      position: relative; z-index: 1;
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: rgba(14,20,40,0.6); backdrop-filter: blur(20px);
+    }
+    .stat-item {
+      padding: 2.5rem 2rem; text-align: center;
+      border-right: 1px solid var(--border);
+      transition: background 0.3s;
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-item:hover { background: var(--gold-dim); }
+    .stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3rem; font-weight: 300; color: var(--gold); line-height: 1;
+      display: block; margin-bottom: 0.5rem;
+    }
+    .stat-label { font-size: 11px; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; }
+
+    /* ── SECTION COMMONS ── */
+    section { position: relative; z-index: 1; }
+    .section-inner { max-width: 1100px; margin: 0 auto; padding: 6rem 2rem; }
+    .section-tag {
+      font-size: 10px; font-weight: 700; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--gold);
+      display: flex; align-items: center; gap: 10px; margin-bottom: 1.2rem;
+    }
+    .section-tag::before {
+      content: ''; width: 30px; height: 1px; background: var(--gold);
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 4vw, 3.5rem); font-weight: 300; line-height: 1.2;
+      color: #f5f0e0; margin-bottom: 1rem;
+    }
+    .section-title em { font-style: italic; color: var(--gold); }
+    .section-desc { font-size: 16px; color: var(--text-muted); max-width: 480px; line-height: 1.9; }
+
+    /* ── WHO WE SERVE ── */
+    .paths-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 2px; margin-top: 4rem;
+    }
+    .path-card {
+      background: var(--ink-2); padding: 3rem 2.5rem;
+      border: 1px solid var(--border); border-radius: var(--radius);
+      transition: all 0.35s; position: relative; overflow: hidden;
+    }
+    .path-card::after {
+      content: ''; position: absolute; inset: 0; opacity: 0;
+      background: linear-gradient(135deg, var(--gold-dim), transparent);
+      transition: opacity 0.35s;
+    }
+    .path-card:hover { border-color: var(--gold-border); transform: translateY(-4px); }
+    .path-card:hover::after { opacity: 1; }
+
+    .path-icon {
+      width: 52px; height: 52px; border-radius: 12px;
+      background: var(--gold-dim); border: 1px solid var(--gold-border);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.5rem; position: relative; z-index: 1;
+    }
+    .path-icon svg { width: 22px; height: 22px; stroke: var(--gold); fill: none; stroke-width: 1.5; }
+    .path-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 0.6rem;
+      position: relative; z-index: 1;
+    }
+    .path-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem; font-weight: 400; color: #f5f0e0;
+      margin-bottom: 1rem; position: relative; z-index: 1;
+    }
+    .path-desc { font-size: 14px; color: var(--text-muted); line-height: 1.8; position: relative; z-index: 1; }
+    .path-tags {
+      display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.5rem;
+      position: relative; z-index: 1;
+    }
+    .tag {
+      font-size: 11px; color: var(--gold); background: var(--gold-dim);
+      border: 1px solid var(--gold-border); padding: 0.3rem 0.75rem;
+      border-radius: 100px; font-weight: 500;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .how-section { background: var(--ink-2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .how-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 5rem; align-items: center;
+    }
+    .step-list { display: flex; flex-direction: column; gap: 0; margin-top: 3rem; }
+    .step-item {
+      display: flex; gap: 1.5rem; padding: 1.8rem 0;
+      border-bottom: 1px solid var(--border);
+      transition: all 0.3s; cursor: default;
+    }
+    .step-item:first-child { border-top: 1px solid var(--border); }
+    .step-item:hover { padding-left: 0.5rem; }
+    .step-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.5rem; font-weight: 300; color: var(--text-dim);
+      line-height: 1; min-width: 50px; transition: color 0.3s;
+    }
+    .step-item:hover .step-num { color: var(--gold); }
+    .step-content {}
+    .step-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 0.4rem; }
+    .step-desc { font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+
+    .how-visual {
+      background: var(--ink-3); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 2rem; position: relative; overflow: hidden;
+    }
+    .how-visual::before {
+      content: ''; position: absolute; top: -50px; right: -50px;
+      width: 200px; height: 200px; border-radius: 50%;
+      background: var(--gold); opacity: 0.04; filter: blur(40px);
+    }
+    .flow-node {
+      background: var(--ink-2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 0.75rem;
+      display: flex; align-items: center; gap: 12px;
+      transition: border-color 0.3s;
+    }
+    .flow-node:hover { border-color: var(--gold-border); }
+    .flow-node-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot-gold { background: var(--gold); }
+    .dot-blue { background: #4a8fd4; }
+    .dot-green { background: #5ab87a; }
+    .dot-purple { background: #8b6fd4; }
+    .dot-orange { background: #d4844a; }
+    .flow-node-text { font-size: 13px; color: var(--text); font-weight: 500; }
+    .flow-node-sub { font-size: 11px; color: var(--text-muted); }
+    .flow-arrow {
+      text-align: center; color: var(--text-dim); font-size: 18px;
+      margin: -0.25rem 0; padding: 0.1rem 0;
+    }
+    .flow-split {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;
+    }
+    .flow-split .flow-node { margin-bottom: 0; }
+
+    /* ── FEATURES ── */
+    .features-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1.5px; margin-top: 4rem;
+    }
+    .feat {
+      background: var(--ink-2); padding: 2.5rem 2rem;
+      border: 1px solid var(--border); transition: all 0.3s;
+    }
+    .feat:hover { border-color: var(--gold-border); background: var(--ink-3); }
+    .feat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3.5rem; font-weight: 300; color: var(--text-dim);
+      line-height: 1; margin-bottom: 1.5rem; display: block;
+    }
+    .feat-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 0.6rem; }
+    .feat-desc { font-size: 13px; color: var(--text-muted); line-height: 1.8; }
+
+    /* ── TESTIMONIALS ── */
+    .testimonials-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem; margin-top: 4rem;
+    }
+    .testi-card {
+      background: var(--ink-2); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 2rem;
+      transition: all 0.3s;
+    }
+    .testi-card:hover { border-color: var(--gold-border); transform: translateY(-3px); }
+    .testi-stars { display: flex; gap: 3px; margin-bottom: 1rem; }
+    .star { color: var(--gold); font-size: 13px; }
+    .testi-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem; font-style: italic; color: #d8d0b8;
+      line-height: 1.7; margin-bottom: 1.5rem;
+    }
+    .testi-author { display: flex; align-items: center; gap: 10px; }
+    .testi-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 600; flex-shrink: 0;
+    }
+    .av-1 { background: rgba(201,168,76,0.2); color: var(--gold); }
+    .av-2 { background: rgba(74,143,212,0.2); color: #4a8fd4; }
+    .av-3 { background: rgba(90,184,122,0.2); color: #5ab87a; }
+    .testi-name { font-size: 13px; font-weight: 600; color: var(--text); }
+    .testi-role { font-size: 11px; color: var(--text-muted); }
+
+    /* ── CTA BANNER ── */
+    .cta-banner {
+      margin: 0 2rem 6rem;
+      background: var(--ink-3); border: 1px solid var(--gold-border);
+      border-radius: 20px; padding: 5rem 3rem;
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .cta-banner::before {
+      content: ''; position: absolute; top: -80px; left: 50%; transform: translateX(-50%);
+      width: 400px; height: 400px; border-radius: 50%;
+      background: var(--gold); opacity: 0.05; filter: blur(80px);
+    }
+    .cta-banner h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 300;
+      color: #f5f0e0; margin-bottom: 1rem; position: relative; z-index: 1;
+    }
+    .cta-banner p { font-size: 16px; color: var(--text-muted); margin-bottom: 2.5rem; position: relative; z-index: 1; }
+    .cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; position: relative; z-index: 1; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 3rem 4rem;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1.5rem;
+    }
+    .footer-left { display: flex; flex-direction: column; gap: 0.5rem; }
+    .footer-copy { font-size: 12px; color: var(--text-dim); }
+    .footer-links { display: flex; gap: 2rem; }
+    .footer-links a { font-size: 12px; color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-tech {
+      font-size: 11px; color: var(--text-dim); letter-spacing: 1px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .tech-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); opacity: 0.6; }
+
+    /* ── CHAT WIDGET ── */
+    #chat-fab {
+      position: fixed; bottom: 32px; right: 32px; z-index: 500;
+      width: 62px; height: 62px; border-radius: 50%;
+      background: var(--gold); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 30px rgba(201,168,76,0.45);
+      transition: all 0.25s;
+    }
+    #chat-fab:hover { background: var(--gold-light); transform: scale(1.1) translateY(-2px); box-shadow: 0 8px 40px rgba(201,168,76,0.55); }
+    #chat-fab svg { width: 28px; height: 28px; }
+    #fab-badge {
+      position: absolute; top: 6px; right: 6px;
+      width: 12px; height: 12px; border-radius: 50%;
+      background: #ef4444; border: 2px solid var(--ink);
+      animation: pulse 2s infinite; display: none;
+    }
+    #fab-badge.show { display: block; }
+
+    #chat-window {
+      position: fixed; bottom: 110px; right: 32px; z-index: 500;
+      width: 400px; max-height: 600px; border-radius: 20px;
+      background: var(--ink-2); border: 1px solid var(--gold-border);
+      box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(201,168,76,0.1);
+      display: none; flex-direction: column; overflow: hidden;
+      transition: all 0.3s;
+    }
+    #chat-window.open {
+      display: flex;
+      animation: chatSlide 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes chatSlide {
+      from { opacity: 0; transform: translateY(20px) scale(0.95); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .chat-header {
+      padding: 1.1rem 1.25rem;
+      background: var(--ink-3);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .chat-agent-pic {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--gold-dim); border: 1px solid var(--gold-border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0; position: relative;
+    }
+    .online-ring {
+      position: absolute; bottom: 1px; right: 1px;
+      width: 11px; height: 11px; border-radius: 50%;
+      background: #22c55e; border: 2px solid var(--ink-3);
+    }
+    .chat-header-info { flex: 1; }
+    .chat-agent-name { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.2; }
+    .chat-agent-status { font-size: 11px; color: #22c55e; display: flex; align-items: center; gap: 5px; }
+    .chat-agent-status::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #22c55e; }
+    .chat-header-actions { display: flex; gap: 6px; }
+    .chat-btn-sm {
+      width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border);
+      background: none; color: var(--text-muted); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+    .chat-btn-sm:hover { background: var(--border); color: var(--text); }
+    .chat-btn-sm svg { width: 14px; height: 14px; }
+
+    #chat-messages {
+      flex: 1; overflow-y: auto; padding: 1.25rem;
+      display: flex; flex-direction: column; gap: 1rem;
+      scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+    }
+    #chat-messages::-webkit-scrollbar { width: 4px; }
+    #chat-messages::-webkit-scrollbar-track { background: transparent; }
+    #chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .msg-row { display: flex; gap: 8px; }
+    .msg-row.user { flex-direction: row-reverse; }
+
+    .msg-avatar-sm {
+      width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 13px;
+      margin-top: 2px; align-self: flex-end;
+    }
+    .msg-avatar-sm.bot-av { background: var(--gold-dim); border: 1px solid var(--gold-border); }
+    .msg-avatar-sm.user-av { background: rgba(74,143,212,0.15); border: 1px solid rgba(74,143,212,0.25); }
+
+    .msg-body { max-width: 82%; display: flex; flex-direction: column; gap: 4px; }
+    .msg-row.user .msg-body { align-items: flex-end; }
+
+    .bubble {
+      padding: 0.7rem 1rem; font-size: 13.5px; line-height: 1.65;
+      word-break: break-word;
+    }
+    .bubble.bot {
+      background: var(--ink-3); border: 1px solid var(--border);
+      color: #c8c2b0; border-radius: 4px 14px 14px 14px;
+    }
+    .bubble.user {
+      background: var(--gold-dim); border: 1px solid var(--gold-border);
+      color: var(--text); border-radius: 14px 4px 14px 14px;
+    }
+    .msg-time { font-size: 10px; color: var(--text-dim); padding: 0 4px; }
+
+    .typing-indicator {
+      display: flex; gap: 5px; align-items: center; padding: 6px 4px;
+    }
+    .typing-indicator span {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--text-dim);
+      animation: typBounce 1.3s infinite;
+    }
+    .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typBounce { 0%,60%,100%{transform:translateY(0);opacity:0.4} 30%{transform:translateY(-6px);opacity:1} }
+
+    .chat-quick-replies {
+      padding: 0.5rem 1.25rem 0; display: flex; gap: 0.5rem; flex-wrap: wrap;
+    }
+    .quick-reply {
+      font-size: 12px; color: var(--gold); background: var(--gold-dim);
+      border: 1px solid var(--gold-border); padding: 0.3rem 0.75rem;
+      border-radius: 100px; cursor: pointer; font-family: 'Syne', sans-serif;
+      transition: all 0.2s; white-space: nowrap;
+    }
+    .quick-reply:hover { background: rgba(201,168,76,0.25); }
+
+    .chat-input-wrap {
+      padding: 0.85rem 1rem;
+      border-top: 1px solid var(--border);
+      display: flex; align-items: flex-end; gap: 8px;
+    }
+    #chat-input {
+      flex: 1; background: var(--ink-3); border: 1px solid var(--border);
+      color: var(--text); border-radius: 10px; padding: 0.65rem 1rem;
+      font-size: 13.5px; font-family: 'Syne', sans-serif;
+      resize: none; outline: none; line-height: 1.5;
+      max-height: 100px; min-height: 42px; overflow-y: auto;
+      transition: border-color 0.2s;
+    }
+    #chat-input::placeholder { color: var(--text-dim); }
+    #chat-input:focus { border-color: var(--gold-border); }
+
+    #send-btn {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: var(--gold); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all 0.2s;
+    }
+    #send-btn:hover { background: var(--gold-light); }
+    #send-btn:disabled { background: var(--ink-3); cursor: not-allowed; }
+    #send-btn svg { width: 16px; height: 16px; fill: var(--ink); }
+    #send-btn:disabled svg { fill: var(--text-dim); }
+
+    .chat-footer-note {
+      padding: 0.5rem; text-align: center;
+      font-size: 10px; color: var(--text-dim); letter-spacing: 0.5px;
+      border-top: 1px solid rgba(255,255,255,0.03);
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .reveal {
+      opacity: 0; transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      header { padding: 1rem 1.5rem; }
+      header.scrolled { padding: 0.8rem 1.5rem; }
+      nav { display: none; }
+      nav.open { display: flex; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: var(--ink-2); border-bottom: 1px solid var(--border); padding: 1.5rem; gap: 1.5rem; }
+      .mobile-menu-btn { display: block; }
+      .header-cta { display: none; }
+      .paths-grid { grid-template-columns: 1fr; }
+      .how-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr 1fr; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .stats-bar { grid-template-columns: 1fr 1fr; }
+      .stat-item:nth-child(2) { border-right: none; }
+      .stat-item { border-bottom: 1px solid var(--border); }
+      footer { flex-direction: column; padding: 2rem; }
+      #chat-window { width: calc(100vw - 32px); right: 16px; bottom: 95px; }
+      #chat-fab { right: 20px; bottom: 20px; }
+      .cta-banner { margin: 0 1rem 4rem; padding: 3rem 1.5rem; }
+    }
+
+    @media (max-width: 600px) {
+      .features-grid { grid-template-columns: 1fr; }
+      .stats-bar { grid-template-columns: 1fr 1fr; }
+      .hero { padding: 7rem 1.5rem 3rem; }
+      .section-inner { padding: 4rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background elements -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <!-- ── HEADER ── -->
+  <header id="site-header">
+    <a class="logo-wrap" href="#">
+      <div class="logo-badge">R</div>
+      <div class="logo-text-wrap">
+        <span class="logo-name">Regex Software</span>
+        <span class="logo-sub">Services</span>
+      </div>
+    </a>
+    <nav id="main-nav">
+      <a href="#paths">Who It's For</a>
+      <a href="#how">How It Works</a>
+      <a href="#features">Features</a>
+      <a href="#testimonials">Stories</a>
+    </nav>
+    <button class="header-cta" onclick="openChat()">Start Free Session</button>
+    <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Menu">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5">
+        <line x1="1" y1="4" x2="17" y2="4"/><line x1="1" y1="9" x2="17" y2="9"/><line x1="1" y1="14" x2="17" y2="14"/>
+      </svg>
+    </button>
+  </header>
+
+  <!-- ── HERO ── -->
+  <section class="hero" id="hero">
+    <div class="hero-eyebrow">
+      <div class="pulse-dot"></div>
+      AI Career Counselling · Class of 2025
+    </div>
+    <h1 class="hero-headline">
+      Your Future Career<br>
+      <em>Starts With One</em><br>
+      <strong>Conversation</strong>
+    </h1>
+    <p class="hero-sub">
+      An AI counsellor that listens to your background, understands your goals, and delivers a personalised 12-month roadmap — for tech and non-tech students alike.
+    </p>
+    <div class="hero-actions">
+      <button class="btn-gold" onclick="openChat()">Talk to AI Counsellor</button>
+      <button class="btn-ghost" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">See the Process</button>
+    </div>
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+      Scroll
+    </div>
+  </section>
+
+  <!-- ── STATS BAR ── -->
+  <div class="stats-bar reveal" id="paths">
+    <div class="stat-item">
+      <span class="stat-num">5,200+</span>
+      <span class="stat-label">Students Guided</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">2</span>
+      <span class="stat-label">Specialist Agents</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">12 min</span>
+      <span class="stat-label">Avg. Session Time</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">98%</span>
+      <span class="stat-label">Satisfaction Rate</span>
+    </div>
+  </div>
+
+  <!-- ── WHO WE SERVE ── -->
+  <section>
+    <div class="section-inner">
+      <div class="section-tag">Who We Serve</div>
+      <h2 class="section-title reveal">Tailored guidance for<br><em>every background</em></h2>
+      <p class="section-desc reveal">Whether you're deep in code or exploring how to pivot into tech — there's a specialist counsellor waiting for you.</p>
+
+      <div class="paths-grid">
+        <div class="path-card reveal">
+          <div class="path-icon">
+            <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <div class="path-label">Track One</div>
+          <div class="path-title">Tech Background</div>
+          <p class="path-desc">If you're from CSE, ECE, Mechanical, Civil, or IT — your Tech Counsellor knows your stream inside-out. Get a precise roadmap with real certification names, salary benchmarks, and a phase-by-phase plan.</p>
+          <div class="path-tags">
+            <span class="tag">CSE / IT</span>
+            <span class="tag">ECE</span>
+            <span class="tag">Mechanical</span>
+            <span class="tag">Civil</span>
+            <span class="tag">Electrical</span>
+          </div>
+        </div>
+        <div class="path-card reveal">
+          <div class="path-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+          <div class="path-label">Track Two</div>
+          <div class="path-title">Non-Tech Background</div>
+          <p class="path-desc">Commerce, Arts, Law, Psychology, Mass Communication — your background is an advantage, not a barrier. Discover exactly how to bridge into tech roles with a step-by-step plan built for career switchers.</p>
+          <div class="path-tags">
+            <span class="tag">Commerce / BBA</span>
+            <span class="tag">Law / LLB</span>
+            <span class="tag">Arts / BA</span>
+            <span class="tag">Psychology</span>
+            <span class="tag">MBA</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── HOW IT WORKS ── -->
+  <section class="how-section" id="how">
+    <div class="section-inner">
+      <div class="how-grid">
+        <div>
+          <div class="section-tag">The Process</div>
+          <h2 class="section-title reveal">From hello to roadmap<br><em>in four steps</em></h2>
+          <div class="step-list">
+            <div class="step-item reveal">
+              <div class="step-num">01</div>
+              <div class="step-content">
+                <div class="step-title">Intake — Share your details</div>
+                <p class="step-desc">Our friendly assistant collects your name, email, and background type (Tech or Non-Tech). One question at a time, naturally.</p>
+              </div>
+            </div>
+            <div class="step-item reveal">
+              <div class="step-num">02</div>
+              <div class="step-content">
+                <div class="step-title">Routing — Meet your specialist</div>
+                <p class="step-desc">You're instantly routed to the right AI counsellor — trained and tuned specifically for tech or non-tech career paths.</p>
+              </div>
+            </div>
+            <div class="step-item reveal">
+              <div class="step-num">03</div>
+              <div class="step-content">
+                <div class="step-title">Discovery — Define your goal</div>
+                <p class="step-desc">Your counsellor identifies your stream, asks about career goals, and queries a curated RAG knowledge base to personalise every answer.</p>
+              </div>
+            </div>
+            <div class="step-item reveal">
+              <div class="step-num">04</div>
+              <div class="step-content">
+                <div class="step-title">Roadmap — Your personalised plan</div>
+                <p class="step-desc">Receive a detailed 12-month career roadmap with phases, certifications, real salary data, and immediate action steps.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="how-visual reveal">
+          <div style="font-size:11px;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:1.25rem;font-weight:600;">Live Workflow</div>
+
+          <div class="flow-node">
+            <div class="flow-node-dot dot-gold"></div>
+            <div>
+              <div class="flow-node-text">Chat Trigger</div>
+              <div class="flow-node-sub">n8n Webhook · Public</div>
+            </div>
+          </div>
+          <div class="flow-arrow">↓</div>
+
+          <div class="flow-node">
+            <div class="flow-node-dot dot-blue"></div>
+            <div>
+              <div class="flow-node-text">Basic Info Collector</div>
+              <div class="flow-node-sub">GPT-4o Mini · Collects name, email, interest</div>
+            </div>
+          </div>
+          <div class="flow-arrow">↓</div>
+
+          <div class="flow-node">
+            <div class="flow-node-dot dot-purple"></div>
+            <div>
+              <div class="flow-node-text">Status Check + Google Sheets Log</div>
+              <div class="flow-node-sub">If completed → route · Track progress</div>
+            </div>
+          </div>
+          <div class="flow-arrow">↓</div>
+
+          <div class="flow-split">
+            <div class="flow-node">
+              <div class="flow-node-dot dot-green"></div>
+              <div>
+                <div class="flow-node-text">Tech Counsellor</div>
+                <div class="flow-node-sub">Supabase RAG · tech table</div>
+              </div>
+            </div>
+            <div class="flow-node">
+              <div class="flow-node-dot dot-orange"></div>
+              <div>
+                <div class="flow-node-text">Non-Tech Counsellor</div>
+                <div class="flow-node-sub">Supabase RAG · nontech table</div>
+              </div>
+            </div>
+          </div>
+          <div class="flow-arrow">↓</div>
+
+          <div class="flow-node">
+            <div class="flow-node-dot dot-gold"></div>
+            <div>
+              <div class="flow-node-text">Personalised Roadmap Delivered</div>
+              <div class="flow-node-sub">12-month plan · Certifications · Salary data</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FEATURES ── -->
+  <section id="features">
+    <div class="section-inner">
+      <div class="section-tag">Capabilities</div>
+      <h2 class="section-title reveal">Built different,<br><em>by design</em></h2>
+      <div class="features-grid">
+        <div class="feat reveal">
+          <span class="feat-num">01</span>
+          <div class="feat-title">RAG-Powered Knowledge</div>
+          <p class="feat-desc">Every answer is grounded in a verified Supabase vector knowledge base — real career paths, actual certifications, and verified salary ranges. Not guesswork.</p>
+        </div>
+        <div class="feat reveal">
+          <span class="feat-num">02</span>
+          <div class="feat-title">Specialist Routing</div>
+          <p class="feat-desc">Two dedicated agents — one for tech streams, one for non-tech backgrounds. Each has a distinct system prompt, knowledge base, and counselling methodology.</p>
+        </div>
+        <div class="feat reveal">
+          <span class="feat-num">03</span>
+          <div class="feat-title">Persistent Memory</div>
+          <p class="feat-desc">A 10-message context window keeps conversations coherent. Your counsellor remembers what you said earlier and never repeats intake questions.</p>
+        </div>
+        <div class="feat reveal">
+          <span class="feat-num">04</span>
+          <div class="feat-title">Google Sheets CRM</div>
+          <p class="feat-desc">Every session is automatically logged to a live Google Sheet — student data, background, session ID, and routing decision tracked and synced in real time.</p>
+        </div>
+        <div class="feat reveal">
+          <span class="feat-num">05</span>
+          <div class="feat-title">Phase-Based Roadmaps</div>
+          <p class="feat-desc">Counsellors deliver structured 4-phase, 12-month roadmaps with specific milestones — Foundation, Skill Building, Experience, and Launch — not vague advice.</p>
+        </div>
+        <div class="feat reveal">
+          <span class="feat-num">06</span>
+          <div class="feat-title">Objection Handling</div>
+          <p class="feat-desc">Built-in scripts for "I can't code", "my parents won't support this", "is it too late?" — the Non-Tech counsellor is trained to reframe doubts into a plan.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TESTIMONIALS ── -->
+  <section id="testimonials" style="background:var(--ink-2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+    <div class="section-inner">
+      <div class="section-tag">Student Stories</div>
+      <h2 class="section-title reveal">Real students,<br><em>real roadmaps</em></h2>
+      <div class="testimonials-grid">
+        <div class="testi-card reveal">
+          <div class="testi-stars">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+          </div>
+          <p class="testi-quote">"I had no idea what to do after my B.Tech in ECE. In 15 minutes, the AI counsellor gave me a roadmap with exact certifications and a realistic timeline. I'm now doing my AWS cert."</p>
+          <div class="testi-author">
+            <div class="testi-avatar av-1">RK</div>
+            <div>
+              <div class="testi-name">Rahul Khatri</div>
+              <div class="testi-role">B.Tech ECE · Jaipur</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card reveal">
+          <div class="testi-stars">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+          </div>
+          <p class="testi-quote">"I was a commerce graduate afraid of tech. The non-tech counsellor showed me exactly how my finance background is an asset in FinTech. Now I'm doing a Power BI certification."</p>
+          <div class="testi-author">
+            <div class="testi-avatar av-2">PS</div>
+            <div>
+              <div class="testi-name">Priya Sharma</div>
+              <div class="testi-role">B.Com · Delhi</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card reveal">
+          <div class="testi-stars">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+          </div>
+          <p class="testi-quote">"The phase-by-phase plan was incredible — specific projects, certifications to get, companies to target. It felt like talking to a real mentor who knew everything about my field."</p>
+          <div class="testi-author">
+            <div class="testi-avatar av-3">AM</div>
+            <div>
+              <div class="testi-name">Arjun Mehta</div>
+              <div class="testi-role">B.Tech CSE · Pune</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA BANNER ── -->
+  <div class="cta-banner reveal">
+    <h2>Ready to find your direction?</h2>
+    <p>Start a free conversation with your AI counsellor — no sign-up, no waiting list.</p>
+    <div class="cta-actions">
+      <button class="btn-gold" onclick="openChat()" style="font-size:16px;padding:1rem 2.5rem;">Begin Your Session ↗</button>
+      <button class="btn-ghost" onclick="openChat()">I'm from a Non-Tech background</button>
+    </div>
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <div class="footer-left">
+      <div class="logo-wrap" style="text-decoration:none;">
+        <div class="logo-badge">R</div>
+        <div class="logo-text-wrap">
+          <span class="logo-name">Regex Software Services</span>
+          <span class="logo-sub">Student Counselling Division</span>
+        </div>
+      </div>
+      <p class="footer-copy">© 2025 Regex Software Services. All rights reserved.</p>
+    </div>
+    <div class="footer-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Use</a>
+      <a href="#">Contact</a>
+      <a href="#">Careers</a>
+    </div>
+    <div class="footer-tech">
+      <div class="tech-dot"></div>
+      Powered by n8n · GPT-4o Mini · Supabase RAG · Google Sheets
+    </div>
+  </footer>
+
+  <!-- ── CHAT FAB ── -->
+  <button id="chat-fab" onclick="toggleChat()" aria-label="Open Career Counsellor Chat">
+    <div id="fab-badge" class="show"></div>
+    <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 5.5C4 4.12 5.12 3 6.5 3H21.5C22.88 3 24 4.12 24 5.5V18C24 19.38 22.88 20.5 21.5 20.5H8.5L4 25V5.5Z" fill="#080c18"/>
+      <circle cx="10" cy="12.5" r="1.6" fill="#080c18"/>
+      <circle cx="14" cy="12.5" r="1.6" fill="#080c18"/>
+      <circle cx="18" cy="12.5" r="1.6" fill="#080c18"/>
+    </svg>
+  </button>
+
+  <!-- ── CHAT WINDOW ── -->
+  <div id="chat-window" role="dialog" aria-label="Career Counsellor Chat">
+    <div class="chat-header">
+      <div class="chat-agent-pic">
+        🎓
+        <div class="online-ring"></div>
+      </div>
+      <div class="chat-header-info">
+        <div class="chat-agent-name">Career Counselling Assistant</div>
+        <div class="chat-agent-status">Online · Regex Software Services</div>
+      </div>
+      <div class="chat-header-actions">
+        <button class="chat-btn-sm" onclick="minimizeChat()" aria-label="Minimise">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+            <line x1="2" y1="7" x2="12" y2="7"/>
+          </svg>
+        </button>
+        <button class="chat-btn-sm" onclick="closeChat()" aria-label="Close">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+            <line x1="2" y1="2" x2="12" y2="12"/><line x1="12" y1="2" x2="2" y2="12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="chat-messages"></div>
+
+    <div id="quick-replies" class="chat-quick-replies"></div>
+
+    <div class="chat-input-wrap">
+      <textarea id="chat-input" placeholder="Type your message…" rows="1"
+        onkeydown="handleChatKey(event)" oninput="autoGrow(this)" aria-label="Message"></textarea>
+      <button id="send-btn" onclick="sendChatMessage()" aria-label="Send">
+        <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1.5 1.5L14.5 8L1.5 14.5V9.5L11 8L1.5 6.5V1.5Z"/>
+        </svg>
+      </button>
+    </div>
+    <div class="chat-footer-note">Powered by n8n · GPT-4o Mini · Supabase Vector RAG</div>
+  </div>
+
+  <script>
+    /* ─── CONFIGURATION ──────────────────────────────────────────── */
+    const N8N_WEBHOOK_URL = 'https://devendradebu.app.n8n.cloud/webhook/a90adbf0-facb-4ca0-87ff-2ac832fc78c7/chat';
+    /* Replace the above with your actual n8n Production Webhook URL  */
+    /* e.g. https://your-n8n.app.n8n.cloud/webhook/a90adbf0.../chat  */
+    /* ────────────────────────────────────────────────────────────── */
+
+    /* ─── STATE ─────────────────────────────────────────────────── */
+    let chatOpen    = false;
+    let chatStarted = false;
+    let isLoading   = false;
+    const sessionId = 'sess_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+
+    /* ─── SCROLL EFFECTS ─────────────────────────────────────────── */
+    const header = document.getElementById('site-header');
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    /* ─── MOBILE MENU ───────────────────────────────────────────── */
+    function toggleMobileMenu() {
+      document.getElementById('main-nav').classList.toggle('open');
+    }
+
+    /* ─── CHAT CONTROLS ─────────────────────────────────────────── */
+    function toggleChat() {
+      chatOpen ? closeChat() : openChat();
+    }
+
+    function openChat() {
+      chatOpen = true;
+      document.getElementById('chat-window').classList.add('open');
+      document.getElementById('fab-badge').classList.remove('show');
+      if (!chatStarted) { chatStarted = true; setTimeout(initChat, 350); }
+      else setTimeout(() => document.getElementById('chat-input').focus(), 100);
+    }
+
+    function closeChat() {
+      chatOpen = false;
+      document.getElementById('chat-window').classList.remove('open');
+    }
+
+    function minimizeChat() { closeChat(); }
+
+    /* ─── INITIAL GREETING ──────────────────────────────────────── */
+    function initChat() {
+      appendBotMsg("👋 Hello! I'm your **Career Counselling Assistant**.\n\nI'm here to help you discover the best career path tailored to your background and interests.\n\nLet's get started! What's your **full name**?");
+      document.getElementById('chat-input').focus();
+    }
+
+    /* ─── MESSAGE HELPERS ───────────────────────────────────────── */
+    function getNow() {
+      return new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+    }
+
+    function formatMsg(text) {
+      return text
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        .replace(/`(.+?)`/g, '<code style="background:rgba(255,255,255,0.08);padding:2px 6px;border-radius:4px;font-size:12px;">$1</code>')
+        .replace(/\n\n/g, '<br><br>')
+        .replace(/\n/g, '<br>');
+    }
+
+    function appendBotMsg(text) {
+      const msgs = document.getElementById('chat-messages');
+      const row  = document.createElement('div');
+      row.className = 'msg-row';
+      row.innerHTML = `
+        <div class="msg-avatar-sm bot-av">🎓</div>
+        <div class="msg-body">
+          <div class="bubble bot">${formatMsg(text)}</div>
+          <span class="msg-time">${getNow()}</span>
+        </div>`;
+      msgs.appendChild(row);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function appendUserMsg(text) {
+      const msgs = document.getElementById('chat-messages');
+      const row  = document.createElement('div');
+      row.className = 'msg-row user';
+      row.innerHTML = `
+        <div class="msg-avatar-sm user-av">👤</div>
+        <div class="msg-body">
+          <div class="bubble user">${text.replace(/\n/g,'<br>')}</div>
+          <span class="msg-time">${getNow()}</span>
+        </div>`;
+      msgs.appendChild(row);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function showTyping() {
+      const msgs = document.getElementById('chat-messages');
+      const row  = document.createElement('div');
+      row.className = 'msg-row'; row.id = 'typing-row';
+      row.innerHTML = `
+        <div class="msg-avatar-sm bot-av">🎓</div>
+        <div class="msg-body">
+          <div class="bubble bot"><div class="typing-indicator"><span></span><span></span><span></span></div></div>
+        </div>`;
+      msgs.appendChild(row);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function removeTyping() {
+      const t = document.getElementById('typing-row');
+      if (t) t.remove();
+    }
+
+    function clearQuickReplies() {
+      document.getElementById('quick-replies').innerHTML = '';
+    }
+
+    /* ─── SEND MESSAGE ──────────────────────────────────────────── */
+    async function sendChatMessage() {
+      const input = document.getElementById('chat-input');
+      const text  = input.value.trim();
+      if (!text || isLoading) return;
+
+      clearQuickReplies();
+      input.value = '';
+      input.style.height = 'auto';
+      appendUserMsg(text);
+
+      isLoading = true;
+      document.getElementById('send-btn').disabled = true;
+      showTyping();
+
+      try {
+        const res = await fetch(N8N_WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chatInput: text, sessionId })
+        });
+
+        removeTyping();
+
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        const reply = data.output || data.message || data.text || data.response || '';
+
+        if (reply) {
+          appendBotMsg(reply);
+        } else {
+          appendBotMsg("I received your message! _(Note: Connect your n8n webhook URL in the config to activate full AI responses.)_");
+        }
+
+      } catch (err) {
+        removeTyping();
+        if (N8N_WEBHOOK_URL === 'YOUR_N8N_WEBHOOK_URL_HERE') {
+          appendBotMsg("⚠️ **Setup required:** Replace `N8N_WEBHOOK_URL` at the top of the `<script>` tag with your actual n8n Production Webhook URL to activate the AI counsellor.");
+        } else {
+          appendBotMsg("⚠️ Connection issue. Please check your n8n workflow is active and the webhook URL is correct.");
+        }
+        console.error('Chat error:', err);
+      } finally {
+        isLoading = false;
+        document.getElementById('send-btn').disabled = false;
+        document.getElementById('chat-input').focus();
+      }
+    }
+
+    function handleChatKey(e) {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMessage(); }
+    }
+
+    function autoGrow(el) {
+      el.style.height = 'auto';
+      el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+    }
+
+    /* Close chat on outside click */
+    document.addEventListener('click', (e) => {
+      const win = document.getElementById('chat-window');
+      const fab = document.getElementById('chat-fab');
+      if (chatOpen && !win.contains(e.target) && !fab.contains(e.target)) {
+        closeChat();
+      }
+    });
+  </script>
+</body>
+</html>
